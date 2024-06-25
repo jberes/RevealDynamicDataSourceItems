@@ -8,7 +8,6 @@ This topic walks through the process of dynamically adding data sources at runti
 ## Prerequisites
 
 - Ensure you have access to a Reveal BI server.
-- Your application must serve over HTTP/HTTPS and support JavaScript.
 
 ## Step 1: Set Up the Reveal Server
 
@@ -34,6 +33,7 @@ Configure how the data sources are requested by implementing `onDataSourcesReque
 revealView.onDataSourcesRequested = async (callback) => {
     var sqlDataSource = new $.ig.RVSqlServerDataSource();
 
+    // Call your function to get a list of tables / etc. to populate in the 
     var listOfTableObjects = await GetAllowedDatabaseObjects();
 
     var datasourceItems = listOfTableObjects.map(obj => {
@@ -76,5 +76,5 @@ async function GetAllowedDatabaseObjects() {
 ## Conclusion
 
 After these steps, your application will be equipped to dynamically load and manage dashboards with Reveal BI, tailored to the data access permissions of different users.
-```
+
 
