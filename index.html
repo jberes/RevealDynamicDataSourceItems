@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reveal Sdk - Web Component</title>
+
+</head>
+
+<body>
+    <div id="revealView" style="height: 920px; width: 100%;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script src="https://dl.revealbi.io/reveal/libs/1.6.4/infragistics.reveal.js"></script>
+
+    <script type="text/javascript">
+        $.ig.RevealSdkSettings.setBaseUrl("http://localhost:7006/");
+
+        var revealView = new $.ig.RevealView("#revealView");
+
+        revealView.onDataSourcesRequested = async (callback) => {
+
+            var sqlDataSource = new $.ig.RVSqlServerDataSource();
+            var listOfTableObjects = await GetAllowedDatabaseObjects();
+
+            var datasourceItems = listOfTableObjects.map(obj => {
+                var dsi = new $.ig.RVSqlServerDataSourceItem(sqlDataSource);
+                dsi.title = obj.name + "_" + obj.type;  // Unique name using name and type
+                if (obj.type === "Table") {
+                    dsi.table = obj.name; // Use the name as the table reference for table
+                } else if (obj.type === "StoredProcedure") {
+                    dsi.procedure = obj.name; // Use the name as the stored procedure reference for stored procedures
+                }
+                return dsi;
+            });
+            //The data source is not included so users do not have access to all the data.
+            callback(new $.ig.RevealDataSources([], datasourceItems, true));
+        };
+
+        async function GetAllowedDatabaseObjects() {
+            // Assume fetchDatabaseObjects() retrieves all allowed objects with their details
+            //const objects = await fetchDatabaseObjects(); // This needs to be implemented based on your specific environment
+
+            // code used for testing
+            const objects = [
+                { name: "Customers", type: "Table" },
+                { name: "Categories", type: "Table" },
+                { name: "Sales by Year", type: "StoredProcedure" }
+            ];
+
+            return objects.map(obj => {
+                return {
+                    name: obj.name, // Ensure 'name' is the correct property
+                    type: obj.type  // Ensure 'type' is the correct property
+                };
+            });
+        }
+
+
+    </script>
+</body>
+
+</html>
